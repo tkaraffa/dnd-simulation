@@ -6,12 +6,9 @@ random variable and uses it to select an integer value that can then be
 used by the Monster object.
 """
 from typing import Tuple
-import os
-import pandas as pd
 import numpy as np
 import itertools
 from collections import OrderedDict
-from scipy.stats import skewnorm
 from die import Die
 
 

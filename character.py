@@ -219,7 +219,15 @@ class Barbarian(Character):
             damage_dice=damage_dice,
             initiative_bonus=initiative_bonus,
         )
+        self.damage_bonus += self.rage_bonus
         self.great_weapon_fighting = great_weapon_fighting
+
+    @property
+    def rage_bonus(self):
+        levels = [self.level <= 8, 9 <= self.level <= 15, 16 <= self.level]
+        bonus = [2, 3, 4]
+        bonus = np.select(levels, bonus)
+        return bonus
 
     @property
     def damage_dice(self):
@@ -292,11 +300,12 @@ class Monster(Character):
         self,
         name: str = "Monster",
         cr: int = None,
+        ac: int = None,
     ) -> None:
         super().__init__(
             name,
             hit_die=choose_hit_die(cr),
-            ac=choose_ac(cr),
+            ac=ac if ac is not None else choose_ac(cr),
             strength_modifier=choose_strength_modifier(cr),
             initiative_bonus=choose_initiative_bonus(cr),
             damage_dice=choose_damage_dice(cr),

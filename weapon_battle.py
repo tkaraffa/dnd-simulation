@@ -36,7 +36,7 @@ from plotly import graph_objects as go
 
 from die import Die
 from character import Character, Monster
-from utils import find_defeat_index, fight, generate_character_stats, create_chart
+from utils import find_defeat_index, fight, generate_fighter_stats, create_chart
 
 
 def main():
@@ -53,7 +53,7 @@ def main():
         # assume both players have equal AC, which increases by 1 every 4 levels
         # up to a non-shield value of 22 at level 20
         ac = 17 + math.floor(level / 4)
-        shared_stats = generate_character_stats(level, hit_die)
+        shared_stats = generate_fighter_stats(level)
         longswordington = Character(
             name="Longswordington",
             **shared_stats,

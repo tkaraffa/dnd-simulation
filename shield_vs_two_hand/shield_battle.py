@@ -36,7 +36,7 @@ from plotly import graph_objects as go
 
 from die import Die
 from character import Character, Monster
-from utils import find_defeat_index, fight, generate_character_stats, create_chart
+from utils import find_defeat_index, fight, generate_fighter_stats, create_chart
 
 
 def main():
@@ -53,7 +53,7 @@ def main():
         # assume both players have equal AC, which increases by 1 every 4 levels
         # up to a non-shield value of 22 at level 20
         ac = 17 + math.floor(level / 4)
-        shared_stats = generate_character_stats(level, hit_die)
+        shared_stats = generate_fighter_stats(level)
         longswordington = Character(
             name="Longswordington",
             **shared_stats,
@@ -110,27 +110,27 @@ def main():
     longsword_mon_fight_colors = {**tie, **ls, **mon}
     shield_mon_fight_colors = {**tie, **sh, **mon}
 
-    # create_chart(
-    #     char_fight_results,
-    #     char_fight_colors,
-    #     "Longswordington vs Shieldsworth",
-    #     os.path.join(images_directory, "shield_battleXXX.png"),
-    #     REPLICATIONS,
-    # )
-    # create_chart(
-    #     longsword_mon_fight_results,
-    #     longsword_mon_fight_colors,
-    #     "Longswordington vs Monster",
-    #     os.path.join(images_directory, "ls_mon.png"),
-    #     REPLICATIONS,
-    # )
-    # create_chart(
-    #     shield_mon_fight_results,
-    #     shield_mon_fight_colors,
-    #     "Shieldsworth vs Monster",
-    #     os.path.join(images_directory, "sh_mon.png"),
-    #     REPLICATIONS,
-    # )
+    create_chart(
+        char_fight_results,
+        char_fight_colors,
+        "Longswordington vs Shieldsworth",
+        os.path.join(images_directory, "shield_battleXXX.png"),
+        REPLICATIONS,
+    )
+    create_chart(
+        longsword_mon_fight_results,
+        longsword_mon_fight_colors,
+        "Longswordington vs Monster",
+        os.path.join(images_directory, "ls_mon.png"),
+        REPLICATIONS,
+    )
+    create_chart(
+        shield_mon_fight_results,
+        shield_mon_fight_colors,
+        "Shieldsworth vs Monster",
+        os.path.join(images_directory, "sh_mon.png"),
+        REPLICATIONS,
+    )
 
 
 if __name__ == "__main__":

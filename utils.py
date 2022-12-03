@@ -1,21 +1,51 @@
+from pathlib import Path
+import os
 import math
 import numpy as np
 from character import Character
 
+images_directory = os.path.join(os.path.dirname(__file__), "images")
 
-def generate_character_stats(level: int, hit_die: int) -> dict:
+
+def _generate_character_stats(
+    level: int,
+    level_options: list,
+    level_apis: list,
+    hit_die: int = None,
+) -> dict:
     """
-    Generate dict of random variables to use as Character statistics.
+    Prototype function for generating character stats.
+    """
+    modifiers = np.select(level_options, level_apis)
+
+    # assume the character starts with a +3 strength modifier
+    # and a +2 constitution modifier, i.e., a 16 strength and 14 constitution
+    # these are standard choices for a strength-based charcter
+    str_modifier = 3 + modifiers[0]
+    con_modifier = 2 + modifiers[1]
+    stats = dict(
+        level=level,
+        strength_modifier=str_modifier,
+        constitution_modifier=con_modifier,
+    )
+    if hit_die is not None:
+        stats = {
+            **stats,
+            "hit_die": (hit_die, 1),
+        }
+    return stats
+
+
+def generate_fighter_stats(level: int) -> dict:
+    """
+    Generate dict of random variables to use as statistics
+    for a Fighter class character.
 
     Parameters
     ----------
     level: int
         The level of the character, which corresponds
         to their relative strength
-    hit_die: int
-        The number of sides of the die to roll
-        when gaining hit points at level up
-
 
     Returns
     -------
@@ -32,7 +62,6 @@ def generate_character_stats(level: int, hit_die: int) -> dict:
         14 <= level,
     ]
     apis = [(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (2, 3)]
-    modifiers = np.select(levels, apis)
     # by the time you get to level 14, if you've exclusively been
     # putting apis into str or con, they will both be 20,
     # and so we don't need to track the two beyond 14th level
@@ -42,25 +71,49 @@ def generate_character_stats(level: int, hit_die: int) -> dict:
     # besides increasing your modifier by 1,
     # so we'll just call it a +1
 
-    # assume the character starts with a +3 strength modifier
-    # and a +2 constitution modifier, i.e., a 16 strength and 14 constitution
-    # these are standard choices for a strength-based fighter
-    # also assume the character progresses alternatingly, i.e.,
+    # assume the character progresses alternatingly, i.e.,
     # at level 4, adds +1 to str modifier, at level 6, adds
     # +1 to con modifier, alternating until level 12,
     # then finishing off con to +5 at level 14
 
-    str_modifier = 3 + modifiers[0]
-    con_modifier = 2 + modifiers[1]
-
-    stats = dict(
-        level=level,
-        strength_modifier=str_modifier,
-        constitution_modifier=con_modifier,
-        hit_die=(hit_die, 1),
-    )
-
+    stats = _generate_character_stats(level, levels, apis, hit_die=10)
     return stats
+
+
+def generate_barbarian_stats(level: int, gwf: bool = False) -> dict:
+    """
+    Generate dict of random variables to use as statistics
+    for a Barbarian class character.
+
+    Parameters
+    ----------
+    level: int
+        The level of the character, which corresponds
+        to their relative strength
+    gwf: bool
+        Whether the Great Weapon Fighting feat is taken
+        at 4th level (instead of an ability point increase).
+
+    Returns
+    -------
+    stats: dict
+        Appropriately-named dict of stats
+        to pass into a Character object
+    """
+    levels = [
+        1 <= level < 4,
+        4 <= level < 8,
+        8 <= level < 12,
+        12 <= level < 16,
+        16 <= level,
+    ]
+    if gwf is True:
+        apis = [(0, 0), (0, 0), (1, 0), (1, 1), (2, 1)]
+    else:
+        apis = [(0, 0), (1, 0), (1, 1), (2, 1), (2, 2)]
+
+    stats = _generate_character_stats(level, levels, apis)
+    return {**stats, "great_weapon_fighting": gwf}
 
 
 def find_defeat_index(target: Character, damage_arr: np.ndarray) -> int:
@@ -158,6 +211,7 @@ def create_chart(
         Number of replications used in the simulation
     """
 
+    filename = os.path.join(images_directory, filename)
     # list comprehensions are hard
     chart_data = []
     for level in results:
