@@ -1,6 +1,5 @@
 import functools
 import numpy as np
-import plotly.graph_objects as go
 
 
 class Die:
@@ -34,7 +33,10 @@ class Die:
 
         roll_arr = functools.reduce(
             np.add,
-            (np.random.randint(1, self.sides + 1, n) for _ in range(self.number)),
+            (
+                np.random.randint(1, self.sides + 1, n)
+                for _ in range(self.number)
+            ),
         )
         return roll_arr
 

@@ -1,7 +1,7 @@
-from pathlib import Path
 import os
-import math
+
 import numpy as np
+
 from character import Character
 
 images_directory = os.path.join(os.path.dirname(__file__), "images")
@@ -169,90 +169,15 @@ def fight(char1: Character, char2: Character, rolls: int = 500) -> str:
     while char1.initiative == char2.initiative:
         char1.roll_initiative()
         char2.roll_initiative()
-    if char1.initiative > char2.initiative:
-        first = char1_damage_arr
-        second = char2_damage_arr
-    else:
-        first = char2_damage_arr
-        second = char1_damage_arr
 
     if (char1_defeated_at > char2_defeated_at) or (
-        char1.initiative > char2.initiative and char1_defeated_at == char2_defeated_at
+        char1.initiative > char2.initiative
+        and char1_defeated_at == char2_defeated_at
     ):
         winner = char1.name
     elif (char2_defeated_at > char1_defeated_at) or (
-        char2.initiative > char1.initiative and char2_defeated_at == char1_defeated_at
+        char2.initiative > char1.initiative
+        and char2_defeated_at == char1_defeated_at
     ):
         winner = char2.name
     return winner
-
-
-def create_chart(
-    results: dict,
-    colors: dict,
-    title: str,
-    filename: str,
-    replications: int,
-):
-    """
-    Create a bar chart to track simulation results
-
-    Paramters
-    ---------
-    results: dict
-        Dictionary of results from simulation
-    colors: dict
-        Dictionary of colors for names of characters
-    title: str
-        Title for the chart
-    filename: str
-        Name of the file for the chart
-    replications: int
-        Number of replications used in the simulation
-    """
-
-    filename = os.path.join(images_directory, filename)
-    # list comprehensions are hard
-    chart_data = []
-    for level in results:
-        chart_data.extend(
-            go.Bar(
-                x=[str(level)],
-                y=[result],
-                name=name,
-                marker_color=colors.get(name),
-                texttemplate="%{y}",
-                textposition="inside",
-                textangle=0,
-                showlegend=False,
-            )
-            for name, result in zip(results[level][0], results[level][1])
-        )
-
-    fig = go.Figure(data=chart_data)
-    # add in dummy data for legend
-    for name in colors:
-        fig.add_trace(
-            go.Bar(
-                name=name,
-                marker_color=colors.get(name),
-                y=[0],
-                visible="legendonly",
-            )
-        )
-    fig.add_hline(y=replications / 2)
-    fig.update_layout(
-        width=800,
-        height=400,
-        barmode="stack",
-        xaxis_title="Level",
-        yaxis_title="Replications",
-        title={
-            "text": title,
-            "xanchor": "center",
-            "yanchor": "top",
-            "y": 0.85,
-            "x": 0.5,
-        },
-    )
-    fig.write_image(filename)

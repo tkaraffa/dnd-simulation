@@ -6,5 +6,5 @@ ENV PYTHONPATH=/src
 COPY requirements.txt /src/requirements.txt
 RUN pip install --user -r requirements.txt
 
-COPY . .
+COPY src ./
 ENTRYPOINT [ "python" ]

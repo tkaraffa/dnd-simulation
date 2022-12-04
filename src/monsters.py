@@ -1,5 +1,6 @@
 """
-Utility functions for randomly generating the statistics of a Monster class object.
+Utility functions for randomly generating
+the statistics of a Monster class object.
 Only a CR is provided on initialization - every function which is used during
 object construction uses this integer value to create a normally-distributed
 random variable and uses it to select an integer value that can then be
@@ -51,7 +52,8 @@ def _choose_value(cr: int, options: list, factor: int = 1, scale: int = 1):
         raise NotImplementedError("Only up to CR 20 is supported!")
     # add max possible value of CR+5
     max_value = min(len(options) - 1, cr + cr_range)
-    # add min possible value of CR-5, and force to be below max_value to be a valid Triangular distribution
+    # add min possible value of CR-5, and force to be below max_value
+    # to be a valid Triangular distribution
     min_value = min(max(0, cr - cr_range), max_value - 1)
     # force the mode's boundaries to be inclusively between max and min values
     mode_value = max(min(cr * max_value / max_cr, max_value), min_value)
@@ -87,7 +89,9 @@ def choose_strength_modifier(cr: int) -> int:
     added to a Character's to-hit and damage rolls).
     """
     strength_modifier_options = list(range(-2, 8))
-    strength_modifier = _choose_value(cr, strength_modifier_options, factor=3, scale=2)
+    strength_modifier = _choose_value(
+        cr, strength_modifier_options, factor=3, scale=2
+    )
     return strength_modifier
 
 
@@ -108,7 +112,9 @@ def choose_initiative_bonus(cr: int) -> int:
     to a d20 roll to determine which character goes first in a round).
     """
     initiative_bonus_options = list(range(-2, 9))
-    initiative_bonus = _choose_value(cr, initiative_bonus_options, factor=2, scale=1)
+    initiative_bonus = _choose_value(
+        cr, initiative_bonus_options, factor=2, scale=1
+    )
     return initiative_bonus
 
 

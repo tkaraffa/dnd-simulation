@@ -1,4 +1,3 @@
-from typing import List
 import textwrap
 import math
 import numpy as np
@@ -102,8 +101,8 @@ class Character:
 
     def roll_initiative(self):
         """
-        Generate a uniformly-distributed value with a=(1 + initiative bonus) and
-        b=(20 + initiative bonus), to determine which character acts first.
+        Generate a uniformly-distributed value with a=(1 + initiative bonus)
+        and b=(20 + initiative bonus), to determine which character acts first.
         """
         self.initiative = self.d20.roll() + self.initiative_bonus
 
@@ -133,12 +132,12 @@ class Character:
         Returns
         -------
         is_hit: np.array
-            Array of int values for whether the original array was a miss (0), hit (1), or critical hit (2).
+            Array of int values for whether the original
+            array was a miss (0), hit (1), or critical hit (2).
             Corresponds to the number of damage dice to roll for the damage
         """
         # use this to check after calculating all to-hits whether or not
-        # the natural roll was a 20 or 1, so we don't have to store the nat roll,
-        # only the modified roll
+        # the natural roll was a 20 or 1
         natural_20 = 20 + self.hit_bonus
         natural_1 = 1 + self.hit_bonus
 
@@ -164,7 +163,8 @@ class Character:
 
     def damage(self, hit_arr: np.array):
         """
-        Construct array of damage rolls based on an input array of to-hit values
+        Construct array of damage rolls based on
+        an input array of to-hit values
 
         hit_arr: np.array
             Array of the number of damage dice to roll
@@ -212,9 +212,12 @@ class Barbarian(Character):
             name=name,
             level=level,
             ac=ac,
-            # at level 20, barbarians get +2 to strength and constitiution modifiers
+            # at level 20, barbarians get
+            # +2 to strength and constitiution modifiers
             strength_modifier=strength_modifier + (int(level == 20) * 2),
-            constitution_modifier=constitution_modifier + (int(level == 20) * 2),
+            constitution_modifier=(
+                constitution_modifier + (int(level == 20) * 2)
+            ),
             hit_die=(12, 1),
             damage_dice=damage_dice,
             initiative_bonus=initiative_bonus,
@@ -244,14 +247,13 @@ class Barbarian(Character):
 
     def damage(self, hit_arr: np.array):
         """
-        Overloaded `damage` function for barbarian's, to utilize the
+        Overloaded `damage` function for barbarians, to utilize the
         Brutal Critical feature:
         "Beginning at 9th level, you can roll one additional
         weapon damage die when determining the extra damage for
         a critical hit with a melee attack.
         This increases to two additional dice at 13th level
         and three additional dice at 17th level."
-        Construct array of damage rolls based on an input array of to-hit values
 
         hit_arr: np.array
             Array of the number of damage dice to roll
@@ -283,13 +285,18 @@ class Barbarian(Character):
             2,
             3,
         ]
-        brutal_critical_extra_rolls = np.select(level_conditions, extra_dice_rolls)
+        brutal_critical_extra_rolls = np.select(
+            level_conditions, extra_dice_rolls
+        )
         damage_roll = np.vectorize(
             lambda to_hit: self.damage_dice.sum_roll(to_hit)
             + (self.damage_bonus * to_hit)
             # whenever to_hit==2, add 0-3 extra single damage die
             # (e.g., damage dice of 2d6 gives an extra 1d6 roll) rolls
-            + (max(0, to_hit - 1) * extra_die.sum_roll(brutal_critical_extra_rolls))
+            + (
+                max(0, to_hit - 1)
+                * extra_die.sum_roll(brutal_critical_extra_rolls)
+            )
         )
         damage_arr = damage_roll(hit_arr)
         return damage_arr
