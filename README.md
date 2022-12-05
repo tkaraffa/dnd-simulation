@@ -37,10 +37,12 @@ docker-compose run --rm dnd-simulation greatsword_vs_greataxe/gwf.py
 If Docker is unavailable or not preferred, the same functionality can be achieved through a local Python environment. The container is based on Python 3.8.10. It is recommended to use this version to ensure package compatability.
 
 ```
-virtualenv dnd-simulation -p /path/to/python3.8.10
+virtualenv dnd-simulation -p <path/to/python3.8.10>
 cd dnd-simulation
 pip install --user -r requirements.txt
 ```
+
+Visualizations are automatically generated into the `images/` directory.
 
 ## General-Purpose Files
 

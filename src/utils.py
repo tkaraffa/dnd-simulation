@@ -1,10 +1,13 @@
 import os
+from pathlib import Path
 
 import numpy as np
 
 from character import Character
 
+
 images_directory = os.path.join(os.path.dirname(__file__), "images")
+Path(images_directory).mkdir(parents=True, exist_ok=True)
 
 
 def _generate_character_stats(
