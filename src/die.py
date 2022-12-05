@@ -40,23 +40,6 @@ class Die:
         )
         return roll_arr
 
-    def reroll_1s(self, times=1):
-        """
-        Reroll a die that lands on 1
-
-        Parameters
-        ----------
-        times: int, default=1
-            The number of times to reroll before having to take a result
-        """
-        times_left = times
-        val = self.roll()
-        while times_left > 0:
-            if val == 1:
-                val = self.roll()
-            times_left -= 1
-        return val
-
     def sum_roll(self, n: int = 1):
         """
         Calculate the sum of n rolls
